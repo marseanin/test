@@ -1,0 +1,34 @@
+from pydantic import BaseModel, ConfigDict, Field, Json
+
+
+class ConnectionBase(BaseModel):
+    source_id: int | None = Field(None, alias="source_id")
+    destination_id: int | None = Field(None, alias="destination_id")
+    setting: Json | None = Field(None, alias="setting")
+
+
+class Connection(ConnectionBase):
+    """User Models Schema"""
+
+    model_config = ConfigDict(from_attributes=True, allow_extra=True)
+    id: int | None = Field(None, alias="id")
+    status: str | None = Field("active", alias="status")
+    is_active: bool | None = Field(True, alias="is_active")
+
+
+class ConnectionCreate(ConnectionBase):
+    """Customer Models Schema for Update"""
+
+    pass
+
+
+class ConnectionUpdate(ConnectionBase):
+    """Customer Models Schema for Update"""
+
+    pass
+
+
+class ConnectionPartialUpdate(ConnectionBase):
+    """Customer Models Schema for Update"""
+
+    pass
