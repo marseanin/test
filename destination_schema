@@ -1,0 +1,77 @@
+from __future__ import annotations
+import json
+
+from pydantic import BaseModel, ConfigDict, Field, Json, field_validator
+
+from src.product.schemas import Product
+from src.connection.schemas import Connection
+from src.source.schemas import Source
+
+
+class DestinationBase(BaseModel):
+    account_id: int | None = Field(None, alias="account_id")
+    product_id: int | None = Field(None, alias="product_id")
+    setting: Json | None = Field(None, alias="setting")
+    name: str | None = Field(None, alias="name")
+
+
+class Destination(DestinationBase):
+    """User Models Schema"""
+
+    model_config = ConfigDict(from_attributes=True, allow_extra=True)
+    id: int | None = Field(None, alias="id")
+    product: Product | None = None
+    source: Source | None = None
+    connection: Connection | None = None
+    # destination_id: UUID4 | None = Field(None, alias="destination_id")
+    # access_token_id: int | None = Field(None, alias="access_token_id")
+    status: str | None = Field("active", alias="status")
+    is_active: bool | None = Field(True, alias="is_active")
+
+    @field_validator("setting", mode="before", check_fields=False)
+    @classmethod
+    def dict_to_str(cls, value: dict):
+        return json.dumps(value)
+
+
+# Destination.model_rebuild()
+
+
+class DestinationCreate(DestinationBase):
+    """Customer Models Schema for Update"""
+
+    # setting: Json | None = Field(None, alias="setting")
+    pass
+
+
+class DestinationUpdate(DestinationBase):
+    """Customer Models Schema for Update"""
+
+    pass
+
+
+class DestinationPartialUpdate(DestinationBase):
+    """Customer Models Schema for Update"""
+
+    access_token_id: int | None = Field(None, alias="id")
+    account_id: int | None = None
+    product_id: int | None = None
+    setting: Json | None = None
+
+    @field_validator("setting", mode="before")
+    @classmethod
+    def dict_to_str(cls, value: bytes):
+        return json.dumps(value)
+
+
+class DestinationSource(DestinationBase):
+    model_config = ConfigDict(from_attributes=True, allow_extra=True)
+    id: int | None = Field(None, alias="id")
+    product: Product | None = None
+    status: str | None = Field("active", alias="status")
+    is_active: bool | None = Field(True, alias="is_active")
+
+    @field_validator("setting", mode="before", check_fields=False)
+    @classmethod
+    def dict_to_str(cls, value: dict):
+        return json.dumps(value)
